@@ -58,7 +58,9 @@ def plant(directory, label, kind="openai-style", rng=None):
     """Plant one decoy file; return (path, token).
 
     The decoy file is written INSIDE directory as .env.decoy-<label>.
+    The directory is created if it does not exist (mkdir -p).
     """
+    os.makedirs(directory, exist_ok=True)
     rng = rng or random.Random()
     template = dict(DECOY_KINDS).get(kind, DECOY_KINDS[0][1])
     token = template.format(infix=INFIX, rand=_rand(24, rng),

@@ -21,6 +21,16 @@ def _planted(tmp_path, label="db"):
     return plant(str(tmp_path), label, rng=rng)
 
 
+def test_plant_creates_missing_directory(tmp_path):
+    """Regression: plant() must not crash when the target dir is absent."""
+    missing = str(tmp_path / "does" / "not" / "exist")
+    assert not os.path.exists(missing)
+    path, token = plant(missing, "newdir", rng=random.Random(3))
+    assert os.path.exists(path)
+    assert os.path.exists(os.path.join(missing, ".decoy-manifest.json")) \
+        or load_manifest(missing)
+
+
 def test_plant_writes_inert_token(tmp_path):
     path, token = _planted(tmp_path)
     assert os.path.exists(path)
